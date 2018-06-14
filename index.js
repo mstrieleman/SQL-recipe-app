@@ -1,34 +1,28 @@
-const express = require('express');
-const path = require('path');
-const bodyParser = require('body-parser');
-const cons = require('consolidate');
-const dust = require('dustjs-helpers');
-const { Pool, Client } = require('pg')
+const express = require("express");
+const path = require("path");
+const bodyParser = require("body-parser");
+const cons = require("consolidate");
+const dust = require("dustjs-helpers");
+const { Pool, Client } = require("pg");
 const app = express();
 
-const pool = new Pool({
-  user: 'dbuser',
-  host: 'database.server.com',
-  database: 'mydb',
-  password: 'secretpassword',
-  port: 3211,
-})
+// DB Connect
+const connect = 'postgresql://testuser:supersecretpassword@superrealdatabase.server.com:3211/mydb'
 
-pool.query('SELECT NOW()', (err, res) => {
-  console.log(err, res)
-  pool.end()
-})
+//Dust Init
+app.engine("dust", cons.dust);
+app.set("view engine", "dust");
+app.set("views", __dirname + "/views");
 
-const client = new Client({
-  user: 'testuser',
-  host: 'notareal.server.com',
-  database: 'superrealdatabase',
-  password: 'superrealpassword',
-  port: 3211,
-})
-client.connect()
+//Create Public Folder
+app.use(express.static(path.join(__dirname, "public")));
 
-client.query('SELECT NOW()', (err, res) => {
-  console.log(err, res)
-  client.end()
+//Init Body Parser
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+
+//Server
+const PORT = 3000
+app.listen(PORT, => {
+  console.log(`Listening on port ${PORT}.`);
 })
