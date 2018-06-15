@@ -1,2 +1,2 @@
-# SQL-practice
-SQL practice
+# SQL recipe app
+SQL recipe app - uses PostgresQL / Dust / Express
