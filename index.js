@@ -7,7 +7,7 @@ const { Pool, Client } = require("pg");
 const app = express();
 
 // DB Connect
-const connect = 'postgresql://testuser:supersecretpassword@superrealdatabase.server.com:3211/mydb'
+const connect = 'postgresql://username:password@localhost:5432/database'
 
 //Dust Init
 app.engine("dust", cons.dust);
@@ -21,8 +21,13 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
+//Route
+app.get('/', (req, res) => {
+  res.render('index')
+})
+
 //Server
 const PORT = 3000
-app.listen(PORT, => {
+app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}.`);
 })
