@@ -1,5 +1,22 @@
 {>"layout" /}
 
 {<body}
-INDEX
+  <div>
+    <h1 class="display-4">Mess Sergeant Mikes Masterful Recipe Register</h1>
+  </div>
+  {#recipes}
+      <div class="card mt-4 text-white bg-dark mb-3">
+        <h4 class="mt-2 ml-2">{name} <button class="btn btn-primary float-right mr-3" data-toggle="collapse" href="#recipe_{id}" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">
+        <i class="fas fa-angle-down"></i>
+        </button></h4>
+        <div class="collapse multi-collapse text-dark" id="recipe_{id}">
+          <div class="card card-body">
+            {ingredients}
+            </br>
+            </br>
+            {directions}
+          </div>
+        </div>
+      </div>
+  {/recipes}
 {/body}

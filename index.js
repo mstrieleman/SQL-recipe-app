@@ -3,11 +3,14 @@ const path = require("path");
 const bodyParser = require("body-parser");
 const cons = require("consolidate");
 const dust = require("dustjs-helpers");
-const { Pool, Client } = require("pg");
+const { Client } = require("pg");
 const app = express();
 
 // DB Connect
-const connect = 'postgresql://username:password@localhost:5432/database'
+const connectionString = 'postgresql://username:password@localhost:5432/database'
+const client = new Client({
+  connectionString: connectionString,
+})
 
 //Dust Init
 app.engine("dust", cons.dust);
@@ -23,8 +26,19 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 //Route
 app.get('/', (req, res) => {
-  res.render('index')
+
+  //PostgreSQL Connect
+  client.connect()
+  client.query('SELECT * FROM recipes')
+  .then(result => res.render('index', {recipes: result.rows}))
+  .catch(error => console.error(error.stack))
+  // client.end()
 })
+
+// if (err) {
+//   console.error(err ? err.stack : result.rows[0].message)
+// }
+    // res.render('index', {recipes: result.rows})
 
 //Server
 const PORT = 3000
