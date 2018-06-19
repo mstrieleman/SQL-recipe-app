@@ -24,21 +24,30 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-//Route
+//Route get
 app.get('/', (req, res) => {
 
   //PostgreSQL Connect
   client.connect()
+
+  //PostgreSQL Select & Request
   client.query('SELECT * FROM recipes')
   .then(result => res.render('index', {recipes: result.rows}))
   .catch(error => console.error(error.stack))
-  // client.end()
 })
 
-// if (err) {
-//   console.error(err ? err.stack : result.rows[0].message)
-// }
-    // res.render('index', {recipes: result.rows})
+//Route post
+app.post('/add', (req, res) => {
+
+  //Create Insert Query
+  const query = {
+    text: "INSERT INTO recipes(name, ingredients, directions) VALUES($1, $2, $3)",
+    values: [req.body.name, req.body.ingredients, req.body.directions]
+  }
+  client.query(query)
+  .catch(error => console.error(error.stack))
+  res.redirect('/')
+})
 
 //Server
 const PORT = 3000
