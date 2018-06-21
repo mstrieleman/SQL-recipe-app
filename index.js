@@ -33,19 +33,30 @@ app.get('/', (req, res) => {
   //PostgreSQL Select & Request
   client.query('SELECT * FROM recipes')
   .then(result => res.render('index', {recipes: result.rows}))
-  .catch(error => console.error(error.stack))
+  .catch(error => console.error(error))
 })
 
-//Route post
+//Route post new recipe
 app.post('/add', (req, res) => {
-
   //Create Insert Query
   const query = {
     text: "INSERT INTO recipes(name, ingredients, directions) VALUES($1, $2, $3)",
     values: [req.body.name, req.body.ingredients, req.body.directions]
   }
   client.query(query)
-  .catch(error => console.error(error.stack))
+  .catch(error => console.error(error))
+  res.redirect('/')
+})
+
+//Route post recipe update
+app.post('/edit', (req, res) => {
+  //Create Insert Query
+  const query = {
+    text: "UPDATE recipes SET name=$1, ingredients=$2, directions=$3 WHERE id = $4",
+    values: [req.body.name, req.body.ingredients, req.body.directions, req.body.id]
+  }
+  client.query(query)
+  .catch(error => console.error(error))
   res.redirect('/')
 })
 
