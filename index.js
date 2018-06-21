@@ -26,9 +26,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 //Route get
 app.get('/', (req, res) => {
-
   //PostgreSQL Connect
-  client.connect()
+    client.connect()
 
   //PostgreSQL Select & Request
   client.query('SELECT * FROM recipes')
@@ -58,6 +57,18 @@ app.post('/edit', (req, res) => {
   client.query(query)
   .catch(error => console.error(error))
   res.redirect('/')
+})
+
+//Route delete recipe
+app.delete('/delete/:id', (req, res) => {
+  //Create Delete Query
+  const query = {
+    text: "DELETE FROM recipes WHERE id = $1",
+    values: [req.params.id]
+  }
+  client.query(query)
+  .catch(error => console.error(error))
+  res.sendStatus(200)
 })
 
 //Server

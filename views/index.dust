@@ -1,67 +1,116 @@
-const express = require("express");
-const path = require("path");
-const bodyParser = require("body-parser");
-const cons = require("consolidate");
-const dust = require("dustjs-helpers");
-const { Client } = require("pg");
-const app = express();
-
-// DB Connect
-const connectionString = 'postgresql://username:password@localhost:5432/database'
-const client = new Client({
-  connectionString: connectionString,
-})
-
-//Dust Init
-app.engine("dust", cons.dust);
-app.set("view engine", "dust");
-app.set("views", __dirname + "/views");
-
-//Create Public Folder
-app.use(express.static(path.join(__dirname, "public")));
-
-//Init Body Parser
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-
-//Route get
-app.get('/', (req, res) => {
-
-  //PostgreSQL Connect
-  client.connect()
-
-  //PostgreSQL Select & Request
-  client.query('SELECT * FROM recipes')
-  .then(result => res.render('index', {recipes: result.rows}))
-  .catch(error => console.error(error))
-})
-
-//Route post new recipe
-app.post('/add', (req, res) => {
-  //Create Insert Query
-  const query = {
-    text: "INSERT INTO recipes(name, ingredients, directions) VALUES($1, $2, $3)",
-    values: [req.body.name, req.body.ingredients, req.body.directions]
-  }
-  client.query(query)
-  .catch(error => console.error(error))
-  res.redirect('/')
-})
-
-//Route post recipe update
-app.post('/edit', (req, res) => {
-  //Create Insert Query
-  const query = {
-    text: "UPDATE recipes SET name=$1, ingredients=$2, directions=$3 WHERE id = $4",
-    values: [req.body.name, req.body.ingredients, req.body.directions, req.body.id]
-  }
-  client.query(query)
-  .catch(error => console.error(error))
-  res.redirect('/')
-})
-
-//Server
-const PORT = 3000
-app.listen(PORT, () => {
-  console.log(`Listening on port ${PORT}.`);
-})
+{>"layout" /}
+{<body}
+<div>
+  <!-- Title -->
+  <h1 class="display-4">Mess Sergeant Mike's Masterful Recipe Register</h1>
+</div>
+<hr/>
+<div class="display">
+  <!-- Add Recipe Button -->
+  <button type="button" class="btn btn-info btn-block" data-toggle="modal" data-target="#addRecipe">Add New Recipe</button>
+</div>
+{#recipes}
+<!-- Bootstrap Card -->
+<div class="card mt-4 text-white bg-dark">
+  <h3 class="mt-2 ml-2">
+    {name}
+    <!-- Expand/Collapse Recipe Button -->
+    <button class="btn btn-primary float-right mr-3" data-toggle="collapse" href="#recipe_{id}" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">
+    <i class="fas fa-angle-down"></i>
+    </button>
+  </h3>
+  <div class="collapse multi-collapse text-dark" id="recipe_{id}">
+    <div class="card card-body">
+      <p><strong>Ingredients: </strong>{ingredients}</p>
+      <br/>
+      <p><strong>Directions: </strong>{directions}</p>
+      <hr/>
+      <div>
+        <!-- Edit Button -->
+        <button type="button" id="edit" class="btn btn-warning edit-recipe"
+          data-toggle="modal" data-target="#editFormModal" data-id="{id}" data-name="{name}" data-ingredients="{ingredients}" data-directions="{directions}">
+        <i class="fas fa-edit"></i>
+        </button>
+        <!-- Delete Button -->
+        <button type="button" id="delete" class="btn btn-danger delete-recipe" data-id="{id}">
+        <i class="fas fa-trash"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+{/recipes}
+<!-- Add Recipe Modal -->
+<div class="modal fade" id="addRecipe" tabindex="-1" role="dialog" aria-labelledby="addRecipeModal" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form method="post" action="/add">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addRecipeModal">New Recipe</h5>
+          <!-- Close Modal Button -->
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Recipe Name</label>
+            <input type="text" class="form-control" name="name"/>
+          </div>
+          <div class="form-group">
+            <label>Ingredients</label>
+            <textarea type="text" class="form-control" name="ingredients"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Directions</label>
+            <textarea type="text" class="form-control" name="directions"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <!-- Close Modal Button -->
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <!-- Save Recipe Button -->
+          <input type="submit" class="btn btn-primary" value="Save Recipe"/>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- Edit Recipe Modal -->
+<div class="modal fade" id="editFormModal" tabindex="-1" role="dialog" aria-labelledby="editFormModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form method="post" action="/edit">
+        <input type="hidden" id="edit-form-id" name="id"/>
+        <div class="modal-header">
+          <h5 class="modal-title" id="editRecipeModal">Edit Recipe</h5>
+          <!-- Close Modal Button -->
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Recipe Name</label>
+            <input type="text" class="form-control" name="name" id="edit-form-name"/>
+          </div>
+          <div class="form-group">
+            <label>Ingredients</label>
+            <textarea type="text" class="form-control" name="ingredients" id="edit-form-ingredients"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Directions</label>
+            <textarea type="text" class="form-control" name="directions" id="edit-form-directions"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <!-- Close Modal Button -->
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <!-- Save Recipe Button -->
+          <input type="submit" class="btn btn-primary" value="Save Recipe"/>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{/body}
