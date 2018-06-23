@@ -9,4 +9,4 @@ SQL recipe app - uses PostgresQL / Dust / Express
 ##
 
 ### In action
-[Imgur](https://i.imgur.com/5Cgonuf.gifv)
+[Recipe-App-In-Action](https://i.imgur.com/5Cgonuf.gifv)
