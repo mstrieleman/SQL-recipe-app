@@ -7,6 +7,4 @@ SQL recipe app - uses PostgresQL / Dust / Express
 - alter connection URI located in index.js, labeled as "connectionString" with credentials that reflect your PostgreSQL server
 - npm run start
 
-### In action
-
 ![Awesome-Recipe-App-In-Action](https://media.giphy.com/media/Bp3V7dotAYV2hTWGrM/giphy.gif)
