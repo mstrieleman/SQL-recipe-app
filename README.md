@@ -8,4 +8,5 @@ SQL recipe app - uses PostgresQL / Dust / Express
 - npm run start
 
 ### In action
+
 ![Awesome-Recipe-App-In-Action](https://media.giphy.com/media/Bp3V7dotAYV2hTWGrM/giphy.gif)
