@@ -15,6 +15,6 @@ SQL recipe app - uses PostgresQL / Dust / Express
 ![Recipe-App-In-Action-Edit-Recipe](https://user-images.githubusercontent.com/14259747/41701302-d3f507e0-74e0-11e8-99e4-8b2ab13c07e7.gif)
 
 ### Delete Recipes
-![Recipe-App-In-Action-Delete-Recipe](https://user-images.githubusercontent.com/14259747/41750445-cff6f7e4-7570-11e8-9ab0-df26e0b0a694.gif)
+![Recipe-App-In-Action-Delete-Recipe](https://user-images.githubusercontent.com/14259747/41805369-f05cf180-765d-11e8-9104-5fa39272ae23.gif)
 
 
